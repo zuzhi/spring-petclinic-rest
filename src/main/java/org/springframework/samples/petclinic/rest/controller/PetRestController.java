@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.mapper.PetMapper;
+import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.rest.api.PetsApi;
 import org.springframework.samples.petclinic.rest.dto.PetDto;
@@ -82,6 +83,10 @@ public class PetRestController implements PetsApi {
         currentPet.setBirthDate(petDto.getBirthDate());
         currentPet.setName(petDto.getName());
         currentPet.setType(petMapper.toPetType(petDto.getType()));
+        if (petDto.getOwnerId() != null) {
+            Owner owner = this.clinicService.findOwnerById(petDto.getOwnerId());
+            currentPet.setOwner(owner);
+        }
         this.clinicService.savePet(currentPet);
         return new ResponseEntity<>(petMapper.toPetDto(currentPet), HttpStatus.NO_CONTENT);
     }
